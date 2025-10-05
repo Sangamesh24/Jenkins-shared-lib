@@ -1,0 +1,20 @@
+def call(String goals = 'clean package') {
+    // Validate Maven installation
+    echo "🔍 Checking Maven installation..."
+    def mvnCmd = tool name: 'MAVEN3', type: 'maven'
+    if (!mvnCmd?.trim()) {
+        error "❌ Maven tool 'MAVEN3' not found in Jenkins. Please configure it under 'Manage Jenkins → Global Tool Configuration'."
+    }
+
+    // Info message
+    echo "🚀 Starting Maven build with goals: ${goals}"
+
+    // Try running the Maven build
+    try {
+        sh "${mvnCmd}/bin/mvn ${goals}"
+        echo "✅ Maven build completed successfully!"
+    } catch (err) {
+        echo "❌ Maven build failed: ${err}"
+        error "Stopping the pipeline due to build failure."
+    }
+}
